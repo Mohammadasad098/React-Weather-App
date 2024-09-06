@@ -49,7 +49,7 @@ function App() {
           weatherData.map((item, index) => (
             <div
               key={index}
-              className="text-center bg-white md:border border-gray-800 shadow-lg ring ring-gray-700 ring-opacity-50 w-50 md:mt-5 rounded-lg md:p-4 md:mb-5 md:mx-60"
+              className="text-center md:my-3 bg-white md:border border-gray-800 shadow-lg ring ring-gray-700 ring-opacity-50 w-50 md:mt-5 rounded-lg md:p-4 md:mb-5 md:mx-60"
             >
               <h1 className="text-2xl">{item.location.name}</h1>
               <p className="text-gray-500">
