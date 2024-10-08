@@ -6,73 +6,60 @@ function App() {
   const [loading, setLoading] = useState(false);
   const cityVal = useRef();
 
-  const addCity = (event) => {
+  const addCity = async (event) => {
     event.preventDefault();
     setLoading(true);
 
-    async function getData() {
-      try {
-        let weatherVal = await axios.get(
-          `https://api.weatherapi.com/v1/current.json?key=e3e98122324b454b92f44333241406&q=${cityVal.current.value}&aqi=no`
-        );
-        setWeatherData((prevData) => [...prevData, weatherVal.data]);
-      } catch (error) {
-        alert('City not found');
-      } finally {
-        setLoading(false);
-      }
+    try {
+      const weatherVal = await axios.get(
+        `https://api.weatherapi.com/v1/current.json?key=e3e98122324b454b92f44333241406&q=${cityVal.current.value}&aqi=no`
+      );
+      setWeatherData((prevData) => [...prevData, weatherVal.data]);
+    } catch (error) {
+      alert('City not found');
+    } finally {
+      setLoading(false);
+      cityVal.current.value = ''; // Clear input here
     }
-    getData();
-    cityVal.current.value = '';
   };
 
   return (
-    <>
-      <div>
-        <h1 className='text-center font-bold text-6xl my-5'>Weather App</h1>
-      </div>
+    <div className="bg-gradient-to-b from-blue-300 to-blue-600 min-h-screen flex flex-col items-center justify-center">
+      <h1 className='text-white font-bold text-6xl my-5 drop-shadow-lg'>Weather App</h1>
       <form className='text-center' onSubmit={addCity}>
         <input
           type="text"
           placeholder="City Name"
           ref={cityVal}
           required
-          className="input input-bordered w-full max-w-xs mt-6"
-        />{' '}
+          className="input px-16 input-bordered w-full max-w-xs mt-6 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200"
+        />
         <br />
-        <button type="submit" className="border p-3 my-3" disabled={loading}>
+        <button type="submit" className="bg-blue-700 text-white rounded-lg p-3 my-3 transition duration-200 hover:bg-blue-800 disabled:opacity-50" disabled={loading}>
           {loading ? <span className="loading loading-spinner loading-md"></span> : 'Show Weather'}
         </button>
       </form>
-      <div>
-        {weatherData ? (
+      <div className="flex flex-col items-center mt-10 p-5">
+        {weatherData.length > 0 ? (
           weatherData.map((item, index) => (
             <div
               key={index}
-              className="text-center md:my-3 bg-white md:border border-gray-800 shadow-lg ring ring-gray-700 ring-opacity-50 w-50 md:mt-5 rounded-lg md:p-4 md:mb-5 md:mx-60"
+              className="bg-white rounded-lg shadow-lg p-5 mb-5 text-center transition-transform transform hover:scale-105"
             >
-              <h1 className="text-2xl">{item.location.name}</h1>
-              <p className="text-gray-500">
-                {item.location.localtime}, {item.location.country}
-              </p>
-              <div className="mt-5 flex justify-between items-center mx-5 pb-4">
-                <h2 className="text-4xl md:text-7xl lg:text-8xl">
-                  {item.current.temp_c}°C
-                </h2>
-                <img
-                  width="160px"
-                  src={item.current.condition.icon}
-                  alt="weatherImg"
-                />
+              <h1 className="text-2xl font-semibold">{item.location.name}</h1>
+              <p className="text-gray-500">{item.location.localtime}, {item.location.country}</p>
+              <div className="mt-5 flex justify-center items-center mx-5">
+                <h2 className="text-4xl md:text-7xl lg:text-8xl">{item.current.temp_c}°C</h2>
+                <img width="100px" src={item.current.condition.icon} alt="weatherImg" />
               </div>
-              <h4>{item.current.condition.text}</h4>
+              <h4 className="mt-3 text-lg font-medium text-gray-600">{item.current.condition.text}</h4>
             </div>
           ))
         ) : (
-          <h1>No Data Available</h1>
+          <h1 className="text-white">No Data Available</h1>
         )}
       </div>
-    </>
+    </div>
   );
 }
 
